@@ -1,10 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton, QLineEdit, QLabel
-# Importamos los siguientes archivos para deplegar matplotlib en pyqt5
+from PyQt6.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
+# Importamos los siguientes archivos para deplegar matplotlib en Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 class MyApp(QWidget):
     def __init__(self):
@@ -30,7 +29,6 @@ class MyApp(QWidget):
         self.nodos_y = QLineEdit(self)
         self.layout.addWidget(self.nodos_y, 1, 1, 1, 1)
         self.nodos_y.setPlaceholderText("nodos en y")
-        
 
         self.boton = QPushButton("Generar malla", self) 
         self.layout.addWidget(self.boton, 2, 0, 1, 2)
@@ -59,9 +57,8 @@ class MyApp(QWidget):
             ax.axis('equal')
             self.canvas.draw()
         
-        
 if __name__ == '__main__':    
     app = QApplication(sys.argv)        
     myApp = MyApp()
     myApp.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

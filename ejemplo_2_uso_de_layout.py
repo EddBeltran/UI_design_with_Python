@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QProgressBar, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
+from PyQt6.QtWidgets import QProgressBar, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
 
 class MyApp(QWidget):
     def __init__(self):
@@ -29,5 +29,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)        
     myApp = MyApp()
     myApp.show()
-    sys.exit(app.exec_())
-
+    sys.exit(app.exec())

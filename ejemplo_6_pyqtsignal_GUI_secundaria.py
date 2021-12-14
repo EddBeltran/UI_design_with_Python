@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QGridLayout
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QLineEdit, QWidget, QPushButton, QGridLayout
+from PyQt6.QtCore import pyqtSignal
 
 class GUI_DOS(QWidget):
     signal_gui = pyqtSignal(object, object)

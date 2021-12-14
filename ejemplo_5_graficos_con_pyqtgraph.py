@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton
 import pyqtgraph as pg
 import numpy as np
 
@@ -7,7 +7,7 @@ class MyApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setGeometry(100, 100, 450, 300)
-        self.setWindowTitle("GUI con pyqtgraph")
+        self.setWindowTitle("Graficos con pyqtgraph")
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.sen = QPushButton("Seno", self)
@@ -16,7 +16,7 @@ class MyApp(QWidget):
         self.cos = QPushButton("Coseno", self)
         self.layout.addWidget(self.cos, 0, 1, 1, 1)
         self.cos.clicked.connect(self.graficar)
-        # llamamos al widget de pyqtgraph 
+
         self.my_plot = pg.PlotWidget()
         self.puntos = self.my_plot.plot(pen=('#208ce4fd'), symbol='o')
         self.layout.addWidget(self.my_plot, 1, 0, 1, 3)
@@ -35,4 +35,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)        
     myApp = MyApp()
     myApp.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

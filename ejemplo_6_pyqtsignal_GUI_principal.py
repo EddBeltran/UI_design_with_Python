@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QLabel, QWidget, QApplication, QPushButton, QGridLayout
+from PyQt6.QtWidgets import QLabel, QWidget, QApplication, QPushButton, QGridLayout
 
 from   ejemplo_6_pyqtsignal_GUI_secundaria import GUI_DOS # Importamos la gui secundaria
 
@@ -32,4 +32,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     myApp = MyApp()
     myApp.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
