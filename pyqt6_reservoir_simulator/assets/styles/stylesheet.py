@@ -1,24 +1,23 @@
 main = '''
 
-QLabel {
-    font-size: 18px;
+
+#left_frame{
+    background: black;
+    max-width: 60px;
 }
 
-QLineEdit {
-    border-radius: 15px;
-    padding: 10px;
-    border: 2px solid gray;
+#sam_1{
+    background: green;
 }
 
-QPushButton {
-    margin: 20px 0;
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    background-color: #581845;
-    border-radius: 15px;
-    padding: 10px;
-    border: 1px solid magenta;
+#sam_2{
+    background: orange;
+}
+
+
+#bottom_frame{
+    background: blue;
+    max-height: 20px;
 }
 
 '''
