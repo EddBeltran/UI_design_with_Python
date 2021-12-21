@@ -1,0 +1,3 @@
+from ui_components.left_widgets import LeftWidgets
+from ui_components.right_widgets import RightWidgets
+from ui_components.bottom_widgets import BottomWidgets

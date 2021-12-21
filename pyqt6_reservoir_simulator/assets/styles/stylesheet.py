@@ -1,5 +1,9 @@
 main = '''
 
+QPushButton#rasp {
+    background: red;
+}
+
 
 #left_frame{
     background: black;
@@ -8,12 +12,17 @@ main = '''
 
 #sam_1{
     background: green;
+    max-width: 250px;
 }
 
 #sam_2{
     background: orange;
 }
 
+#sam_4{
+    background: magenta;
+    max-height: 100px;
+}
 
 #bottom_frame{
     background: blue;
