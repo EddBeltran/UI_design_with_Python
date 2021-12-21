@@ -1,5 +1,5 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFrame, QLabel, QPushButton, QSplitter, QStackedWidget, QVBoxLayout, QWidget
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 
 class RightWidgets(QWidget):
     def __init__(self):

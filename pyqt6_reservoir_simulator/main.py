@@ -1,9 +1,10 @@
 import sys
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import *
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
 
 import ui_components as component
-import assets.styles.stylesheet as styles
+import assets.stylesheet as styles
+
 
 class MainApp(QWidget):
     def __init__(self):
@@ -32,12 +33,12 @@ class MainApp(QWidget):
     
     def fun_2(self):
         self.rigth_section.show_frame_2()
-        #print("fun 2")
         
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)
     app.setStyleSheet(styles.main)
+    app.setWindowIcon(QIcon("icon.ico"))
     myApp = MainApp()    
     myApp.show()
     sys.exit(app.exec())

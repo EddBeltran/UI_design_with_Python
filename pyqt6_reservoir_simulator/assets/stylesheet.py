@@ -1,5 +1,12 @@
 main = '''
 
+#don_bro {
+    background: red;
+    width: 40px;
+    height: 40px;
+
+}
+
 QPushButton#rasp {
     background: red;
 }

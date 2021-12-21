@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QFrame, QHBoxLayout, QPushButton, QWidget
+from PySide6.QtWidgets import *
 
 class BottomWidgets(QWidget):
     def __init__(self):
