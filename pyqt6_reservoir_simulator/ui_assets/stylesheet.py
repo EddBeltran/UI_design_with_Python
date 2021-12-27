@@ -1,21 +1,22 @@
-main = '''
+style = '''
 
-#don_bro {
-    background: red;
-    width: 40px;
-    height: 40px;
-
+#left_menu_frame{
+    background: #581845;
 }
 
-QPushButton#rasp {
-    background: red;
+#left_menu_button {
+    background: #581845;
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+}
+
+#left_menu_button::hover {
+    background: purple;
 }
 
 
-#left_frame{
-    background: black;
-    max-width: 60px;
-}
 
 #sam_1{
     background: green;

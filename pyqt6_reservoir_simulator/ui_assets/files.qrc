@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/carpeta.svg</file>
+    <file>icons/modelo-3d.svg</file>
+    <file>icons/curvas-k.svg</file>
+    <file>icons/mapa.svg</file>
+    <file>icons/ajustes.svg</file>
+    <file>icons/info.svg</file>
+    <file>icons/codigo.svg</file>
+</qresource>
+</RCC>

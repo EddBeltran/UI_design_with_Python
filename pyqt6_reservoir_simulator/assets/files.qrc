@@ -1,7 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>icons/curva.png</file>
-    <file>icons/poligono.png</file>
-    <file>icons/roca.png</file>
-</qresource>
-</RCC>
