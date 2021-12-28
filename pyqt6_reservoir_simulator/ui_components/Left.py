@@ -13,44 +13,17 @@ class LeftWidgets(QWidget):
 
         self.frame.setObjectName("left_menu_frame")
 
-        self.btn_1 = QPushButton(self)
-        self.btn_2 = QPushButton(self)
-        self.btn_3 = QPushButton(self)
-        self.btn_4 = QPushButton(self)
-        self.btn_5 = QPushButton(self)
-        self.btn_6 = QPushButton(self)
-
-        self.btn_1.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_2.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_3.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_4.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_5.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_6.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.btn_1.setIcon(QIcon(":/icons/carpeta.svg"))
-        self.btn_2.setIcon(QIcon(":/icons/modelo-3d.svg"))
-        self.btn_3.setIcon(QIcon(":/icons/curvas-k.svg"))
-        self.btn_4.setIcon(QIcon(":/icons/ajustes.svg"))
-        self.btn_5.setIcon(QIcon(":/icons/mapa.svg"))
-        self.btn_6.setIcon(QIcon(":/icons/codigo.svg"))
-
-        self.btn_1.setIconSize(QSize(35,35))
-        self.btn_2.setIconSize(QSize(35,35))
-        self.btn_3.setIconSize(QSize(35,35))
-        self.btn_4.setIconSize(QSize(35,35))
-        self.btn_5.setIconSize(QSize(35,35))
-        self.btn_6.setIconSize(QSize(35,35))
-   
-        self.btn_1.setObjectName("left_menu_button")
-        self.btn_2.setObjectName("left_menu_button")
-        self.btn_3.setObjectName("left_menu_button")
-        self.btn_4.setObjectName("left_menu_button")
-        self.btn_5.setObjectName("left_menu_button")
-        self.btn_6.setObjectName("left_menu_button")
-
-        self.layout.addWidget(self.btn_1, 0,0,1,1)
-        self.layout.addWidget(self.btn_2, 1,0,1,1)
-        self.layout.addWidget(self.btn_3, 2,0,1,1)
-        self.layout.addWidget(self.btn_4, 3,0,1,1)
-        self.layout.addWidget(self.btn_5, 4,0,1,1)
-        self.layout.addWidget(self.btn_6, 5,0,1,1, Qt.AlignmentFlag.AlignBottom)
+        self.button = ["carpeta","modelo-3d","curvas-k","ajustes","mapa","codigo"]
+        
+        for index, value in enumerate(self.button):
+            self.button[index] = QPushButton(self)
+            self.button[index].setCursor(QCursor(Qt.PointingHandCursor))
+            self.button[index].setObjectName("left_menu_button")
+            self.button[index].setIconSize(QSize(35,35))
+            self.button[index].setIcon(QIcon(":/icons/"+value+".svg"))
+            self.button[index].setCheckable(True)
+            
+            if index != 5 :
+                self.layout.addWidget(self.button[index], index,0,1,1)
+            else:
+                self.layout.addWidget(self.button[5], 5,0,1,1, Qt.AlignmentFlag.AlignBottom)

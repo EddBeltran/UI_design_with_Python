@@ -15,6 +15,20 @@ class MainApp(QWidget):
         self.main_layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.main_layout)
 
+        """
+        GUI Sections (ui_components)
+        __________________________
+        |______________________-_x|
+        |   |       |             |
+        |   |       |             |
+        Left| Middle|    Right    |
+        |   |       |             |
+        |   |       |             |
+        |___|_______|_____________|
+        |________Bottom___________|
+        
+        """
+
         self.left_section = components.LeftWidgets()
         self.middle_section = components.MiddleWidgets()
         self.rigth_section = components.RightWidgets()
@@ -22,22 +36,25 @@ class MainApp(QWidget):
 
         # add splitter between middle and right sections
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
-        self.splitter.addWidget(self.middle_section.frame)
+        self.splitter.addWidget(self.middle_section.stacked_widget)
         self.splitter.addWidget(self.rigth_section.stacked_widget)
         
         # set widgets into layouts
         self.main_layout.addWidget(self.left_section.frame, 0,0,1,1)
         self.main_layout.addWidget(self.splitter, 0,1,1,1)
         self.main_layout.addWidget(self.bottom_section.frame, 1,0,1,2)
-
-        self.left_section.btn_1.clicked.connect(self.fun_1)
-        self.left_section.btn_2.clicked.connect(self.fun_2)
+        
+        # call functions when a button is clicked
+        for i in range(5):
+            self.left_section.button[i].clicked.connect(self.fun_1)
 
     def fun_1(self):
-        self.rigth_section.show_frame()
-    
-    def fun_2(self):
-        self.rigth_section.show_frame_2()
+        if self.left_section.button[0].isChecked():
+            print("boton 1 checked")
+        else:
+            print("no bro")
+        #self.middle_section.show_page_1()
+        #self.middle_section.show_page_2()
         
 
 if __name__ == '__main__':    
