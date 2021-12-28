@@ -28,7 +28,7 @@ class MainApp(QWidget):
         |________Bottom___________|
         
         """
-
+        # call the ui components
         self.left_section = components.LeftWidgets()
         self.middle_section = components.MiddleWidgets()
         self.rigth_section = components.RightWidgets()
@@ -39,23 +39,21 @@ class MainApp(QWidget):
         self.splitter.addWidget(self.middle_section.stacked_widget)
         self.splitter.addWidget(self.rigth_section.stacked_widget)
         
-        # set widgets into layouts
+        # set the widget components into main_layout
         self.main_layout.addWidget(self.left_section.frame, 0,0,1,1)
         self.main_layout.addWidget(self.splitter, 0,1,1,1)
         self.main_layout.addWidget(self.bottom_section.frame, 1,0,1,2)
         
-        # call functions when a button is clicked
-        for i in range(5):
-            self.left_section.button[i].clicked.connect(self.fun_1)
+        # call functions when a button is clicked or a signal is activated
+        self.left_section.buttongroup.idClicked.connect(self.show_middle_sections)
+        self.middle_section.signal_middle.connect(self.plot_grid)
 
-    def fun_1(self):
-        if self.left_section.button[0].isChecked():
-            print("boton 1 checked")
-        else:
-            print("no bro")
-        #self.middle_section.show_page_1()
-        #self.middle_section.show_page_2()
-        
+    def show_middle_sections(self, id):
+        self.middle_section.set_page_by_id(id)
+    
+    def plot_grid(self, value):
+        print("singnal: ", value)
+
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)

@@ -12,7 +12,7 @@ style = '''
     border: 0;
 }
 
-#left_menu_button::hover {
+#left_menu_button::hover, #left_menu_button::checked {
     background: purple;
 }
 
