@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QLabel, QWidget, QApplication, QPushButton, QGridLayout
+from PySide6.QtWidgets import QLabel, QWidget, QApplication, QPushButton, QGridLayout
 
 from   ejemplo_6_pyqtsignal_GUI_secundaria import GUI_DOS # Importamos la gui secundaria
 

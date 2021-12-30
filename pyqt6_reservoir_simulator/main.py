@@ -3,6 +3,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 import ui_components as components
 import ui_assets as assets
+import numpy as np
 
 class MainApp(QWidget):
     def __init__(self):
@@ -23,11 +24,12 @@ class MainApp(QWidget):
         |   |       |             |
         Left| Middle|    Right    |
         |   |       |             |
-        |   |       |             |
+        |   |   spplitter         |
         |___|_______|_____________|
         |________Bottom___________|
         
         """
+        
         # call the ui components
         self.left_section = components.LeftWidgets()
         self.middle_section = components.MiddleWidgets()
@@ -36,6 +38,7 @@ class MainApp(QWidget):
 
         # add splitter between middle and right sections
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
+        #self.splitter.HLine.setStyleSheet()
         self.splitter.addWidget(self.middle_section.stacked_widget)
         self.splitter.addWidget(self.rigth_section.stacked_widget)
         
@@ -45,14 +48,17 @@ class MainApp(QWidget):
         self.main_layout.addWidget(self.bottom_section.frame, 1,0,1,2)
         
         # call functions when a button is clicked or a signal is activated
-        self.left_section.buttongroup.idClicked.connect(self.show_middle_sections)
-        self.middle_section.signal_middle.connect(self.plot_grid)
+        self.left_section.buttongroup.idClicked.connect(self.show_middle_pages)
+        self.middle_section.signal.connect(self.show_right_content)
 
-    def show_middle_sections(self, id):
+    def show_middle_pages(self, id):
         self.middle_section.set_page_by_id(id)
     
-    def plot_grid(self, value):
-        print("singnal: ", value)
+    def show_right_content(self, value):
+        gridx, gridy = np.meshgrid(
+            np.linspace(0, float(value[0]), int(value[3])), 
+            np.linspace(0, float(value[1]), int(value[4]))) 
+        self.rigth_section.create_plot(gridx, gridy)
 
 
 if __name__ == '__main__':    
