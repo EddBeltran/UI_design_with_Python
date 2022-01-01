@@ -3,6 +3,13 @@ style = '''
 QSplitter::handle {
     background: orange;
 }
+QTableView {
+    background: gray;
+    text-align: center;
+    font-size: 18px;
+    color: red;
+}
+
 
 #left_menu_frame{
     background: #581845;
@@ -21,7 +28,7 @@ QSplitter::handle {
 
 #middle_stacked_widget {
     background: white;
-    max-width: 250px;
+    max-width: 300px;
 }
 
 #bottom_frame{

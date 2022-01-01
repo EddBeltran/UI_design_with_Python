@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton
+from PyQt6.QtWidgets import *#QWidget, QApplication, QGridLayout, QPushButton
 import pyqtgraph as pg
 import numpy as np
 
@@ -19,7 +19,7 @@ class MyApp(QWidget):
 
         self.my_plot = pg.PlotWidget()
         self.puntos = self.my_plot.plot(pen=('#208ce4fd'), symbol='o')
-        self.layout.addWidget(self.my_plot, 1, 0, 1, 3)
+        self.layout.addWidget(self.my_plot)
     
     def graficar(self):
         x = np.linspace(0,10,100)

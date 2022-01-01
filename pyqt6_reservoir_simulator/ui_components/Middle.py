@@ -1,5 +1,7 @@
 from PySide6.QtCore import *
+from PySide6.QtGui import * #QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import *
+import numpy as np
 
 class MiddleWidgets(QWidget):
     signal = Signal(tuple)
@@ -10,12 +12,18 @@ class MiddleWidgets(QWidget):
         self.stacked_widget.setObjectName("middle_stacked_widget")
         self.page_0()
         self.page_1()
-        self.set_page_by_id(0)  
+        self.page_2()
+        self.page_3()
+        self.page_4()        
+        
+        self.set_page_by_id(0)
+        self.cont = 0  
     
     def set_page_by_id(self, id):
         self.stacked_widget.setCurrentIndex(id)     
     
-    def page_0(self):
+    #----------------------------------------------- render pages
+    def page_0(self): # Files exploter
         id = 0
         frame = QFrame()
         layout = QVBoxLayout()
@@ -42,7 +50,7 @@ class MiddleWidgets(QWidget):
         layout.addWidget(treeview)
         self.stacked_widget.insertWidget(id, frame)
     
-    def page_1(self):
+    def page_1(self): # Grid settings
         id = 1
         frame = QFrame()
         layout = QGridLayout()
@@ -50,11 +58,10 @@ class MiddleWidgets(QWidget):
         frame.setLayout(layout)
 
         lbl_1 = QLabel("Grid")
-        lbl_2 = QLabel("Dimension")
         self.rb_1 = QRadioButton('1D')
         self.rb_2 = QRadioButton('2D')
         self.rb_3 = QRadioButton('3D')
-        self.rb_1.setChecked(True)
+        self.rb_2.setChecked(True)
         self.rb_1.toggled.connect(self.set_text_edit)
         self.rb_2.toggled.connect(self.set_text_edit)
         self.rb_3.toggled.connect(self.set_text_edit)
@@ -63,42 +70,108 @@ class MiddleWidgets(QWidget):
         self.lx = QLineEdit()
         self.ly = QLineEdit()
         self.lz = QLineEdit()
-
-        self.ly.setEnabled(False)
         self.lz.setEnabled(False)
         
         lbl_4 = QLabel("Nodes")
         self.nodes_x = QLineEdit()
         self.nodes_y = QLineEdit()
         self.nodes_z = QLineEdit()
-
-        self.nodes_y.setEnabled(False)
         self.nodes_z.setEnabled(False)
+        
+        #QValidator(float)Qd
+        self.onlyFloat = QDoubleValidator(10.0, 500000.0, 3)
+        self.onlyInt = QIntValidator(10, 200)
+        self.nodes_x.setValidator(self.onlyInt)
+        self.nodes_y.setValidator(self.onlyInt)
+        
+        self.lx.setValidator(self.onlyFloat)
+        self.ly.setValidator(self.onlyFloat)
+        
+        
+        #self.onlyInt = Qva#QFloatValidator()
+        #self.nodes_x.setValidator(self.onlyInt)
+        
 
-        #check_btn = QCheckBox("Draw custom grid")
-        customize_btn = QPushButton("Customize")
+        self.customize_cbx = QCheckBox("Draw custom grid")
+        self.customize_cbx.stateChanged.connect(self.set_pqtgraph_drawing_widgets)
+        self.lbl_5 = QLabel("Control Points")
+        self.tableWidget = QTableView()
+        self.tableWidget.verticalHeader().setVisible(False)      
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(['Boundary', 'Point(X,Y)'])
+        self.tableWidget.setModel(self.model)
+        self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.rb_4 = QRadioButton('Transfinite Interpolation Method')
+        self.rb_5 = QRadioButton('Iterative Method using Elliptical PDEs')
+        self.rb_4.setChecked(True)
+        self.lbl_6 = QLabel("Iterations: ")
+        self.iterations = QLineEdit("200")
+        self.btn_more = QPushButton("... More")
+        self.set_pqtgraph_drawing_widgets()  
+
         generate_grid = QPushButton("Generate meshgrid")
         
         layout.addWidget(lbl_1, 0,0,1,3)
-        layout.addWidget(lbl_2, 1,0,1,3)
-        layout.addWidget(self.rb_1, 2,0,1,1)
-        layout.addWidget(self.rb_2, 2,1,1,1)
-        layout.addWidget(self.rb_3, 2,2,1,1)
-        layout.addWidget(lbl_3, 3,0,1,3)
-        layout.addWidget(self.lx, 4,0,1,1)
-        layout.addWidget(self.ly, 4,1,1,1)
-        layout.addWidget(self.lz, 4,2,1,1)
-        layout.addWidget(lbl_4, 5,0,1,3)
-        layout.addWidget(self.nodes_x, 6,0,1,1)
-        layout.addWidget(self.nodes_y, 6,1,1,1)
-        layout.addWidget(self.nodes_z, 6,2,1,1)
+        layout.addWidget(self.rb_1, 1,0,1,1)
+        layout.addWidget(self.rb_2, 1,1,1,1)
+        layout.addWidget(self.rb_3, 1,2,1,1)
+        layout.addWidget(lbl_3, 2,0,1,3)
+        layout.addWidget(self.lx, 3,0,1,1)
+        layout.addWidget(self.ly, 3,1,1,1)
+        layout.addWidget(self.lz, 3,2,1,1)
+        layout.addWidget(lbl_4, 4,0,1,3)
+        layout.addWidget(self.nodes_x, 5,0,1,1)
+        layout.addWidget(self.nodes_y, 5,1,1,1)
+        layout.addWidget(self.nodes_z, 5,2,1,1)
+        layout.addWidget(self.customize_cbx, 6,0,1,3)
+        layout.addWidget(self.lbl_5, 7,0,1,3)
+        layout.addWidget(self.tableWidget, 8,0,1,3)
+        layout.addWidget(self.rb_4, 9,0,1,3)
+        layout.addWidget(self.rb_5, 10,0,1,3)
+        layout.addWidget(self.lbl_6, 11,0,1,1)
+        layout.addWidget(self.iterations, 11,1,1,1)
+        layout.addWidget(self.btn_more, 11,2,1,1)
+        layout.addWidget(generate_grid, 12,0,1,3, Qt.AlignmentFlag.AlignBottom)
+        layout.setRowStretch(12,3)
         
-        layout.addWidget(customize_btn, 8,0,1,1, Qt.AlignmentFlag.AlignBottom)
-        layout.addWidget(generate_grid, 8,1,1,2, Qt.AlignmentFlag.AlignBottom)
-        layout.setRowStretch(8,3)
         self.stacked_widget.insertWidget(id, frame)
-        generate_grid.clicked.connect(self.send_parameters_by_signal) #lambda: self.signal.emit(p1_tuple)
+        generate_grid.clicked.connect(self.send_parameters_by_signal)
     
+    def page_2(self):
+        id = 2
+        frame = QFrame()
+        layout = QVBoxLayout()
+        #layout.setContentsMargins(0,0,0,0)
+        frame.setLayout(layout)
+
+        lbl_1 = QLabel("page 2")
+        layout.addWidget(lbl_1)
+        self.stacked_widget.insertWidget(id, frame)
+    
+    def page_3(self):
+        id = 3
+        frame = QFrame()
+        layout = QVBoxLayout()
+        #layout.setContentsMargins(0,0,0,0)
+        frame.setLayout(layout)
+
+        lbl_1 = QLabel("page 3")
+        layout.addWidget(lbl_1)
+        self.stacked_widget.insertWidget(id, frame)
+    
+    def page_4(self):
+        id = 4
+        frame = QFrame()
+        layout = QVBoxLayout()
+        #layout.setContentsMargins(0,0,0,0)
+        frame.setLayout(layout)
+
+        lbl_1 = QLabel("page 4")
+        layout.addWidget(lbl_1)
+        self.stacked_widget.insertWidget(id, frame)
+    
+    #------------------------------------------------------ add or modify widgets of rendered pages       
     def set_text_edit(self):
         if self.rb_1.isChecked():
             self.ly.setEnabled(False)
@@ -117,9 +190,42 @@ class MiddleWidgets(QWidget):
             self.lz.setEnabled(True)
             self.nodes_y.setEnabled(True)
             self.nodes_z.setEnabled(True)
-
-         
-    def send_parameters_by_signal(self):
         
-        tuple_1 = (self.lx.text(), self.ly.text(), self.lz.text(),  self.nodes_x.text(), self.nodes_y.text(), self.nodes_z.text() )
-        self.signal.emit(tuple_1)
+    
+    def set_pqtgraph_drawing_widgets(self):
+        if self.customize_cbx.isChecked():
+            self.response = True
+        else:
+            self.response = False
+        self.lbl_5.setEnabled(self.response)
+        self.tableWidget.setEnabled(self.response)
+        self.rb_4.setEnabled(self.response)
+        self.rb_5.setEnabled(self.response)
+        self.lbl_6.setEnabled(self.response)
+        self.iterations.setEnabled(self.response)
+        self.btn_more.setEnabled(self.response)
+        
+        
+        def addpoints(self):
+            import random
+            sam = random.random()
+            self.cont = self.cont + 1
+            
+            item0 = QStandardItem("south")
+            item1 = QStandardItem( str(round(sam, 1)) + " , " + str(round(sam, 2)) )
+            item0.setTextAlignment(Qt.AlignHCenter)
+            item1.setTextAlignment(Qt.AlignHCenter)
+            self.model.setItem(self.cont, 0, item0)
+            self.model.setItem(self.cont, 1, item1)
+
+    #---------------------------------------------------- send signals     
+    def send_parameters_by_signal(self):
+        #if (type(self.lx.text()))
+        #print(self.lx.validator())
+        if (self.lx.text() == '' or self.ly.text() == '' or self.nodes_x.text() == '' or self.nodes_y.text() ==''):
+            print("Please fill the required fields")
+        else:
+            tuple_1 = (float(self.lx.text()), float(self.ly.text()), 0.0,
+                       int(self.nodes_x.text()), int(self.nodes_y.text()), 0 )
+
+            self.signal.emit(tuple_1)
