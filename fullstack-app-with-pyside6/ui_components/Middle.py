@@ -98,7 +98,7 @@ class MiddleWidgets(QWidget):
         self.tableWidget = QTableView()
         self.tableWidget.verticalHeader().setVisible(False)      
         self.model = QStandardItemModel()
-        self.model.setHorizontalHeaderLabels(['Boundary', 'Point(X,Y)'])
+        self.model.setHorizontalHeaderLabels(['id','Boundary', 'X', 'Y'])
         self.tableWidget.setModel(self.model)
         self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
@@ -206,14 +206,21 @@ class MiddleWidgets(QWidget):
         self.btn_more.setEnabled(self.response)
         
         
-    def addpoints(self, point_x, point_y, boundary):
-        item0 = QStandardItem(boundary)
-        item1 = QStandardItem( str(round(point_x, 2)) + " , " + str(round(point_y, 2)) )
-        item0.setTextAlignment(Qt.AlignHCenter)
-        item1.setTextAlignment(Qt.AlignHCenter)
-        self.model.setItem(self.cont, 0, item0)
-        self.model.setItem(self.cont, 1, item1)
+    def addpoints(self, id_array, boundary, point_x, point_y):
+        item_0 = QStandardItem(str(id_array)) 
+        item_1 = QStandardItem(boundary)
+        item_2 = QStandardItem( str(round(point_x, 2)) )
+        item_3 = QStandardItem( str(round(point_y, 2)) )
+        item_0.setTextAlignment(Qt.AlignHCenter)
+        item_1.setTextAlignment(Qt.AlignHCenter)
+        item_2.setTextAlignment(Qt.AlignHCenter)
+        item_3.setTextAlignment(Qt.AlignHCenter)
         
+        self.model.setItem(id_array, 0, item_0)
+        self.model.setItem(id_array, 1, item_1)
+        self.model.setItem(id_array, 2, item_2)
+        self.model.setItem(id_array, 3, item_3)
+
         self.cont = self.cont + 1
 
     #---------------------------------------------------- send signals     

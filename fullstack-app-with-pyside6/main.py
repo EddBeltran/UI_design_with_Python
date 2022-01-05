@@ -6,6 +6,7 @@ import ui_components as components
 import ui_assets as assets
 import ui_functions as functions
 import numpy as np
+import matplotlib.pyplot as plt
 
 class MainApp(QWidget):
     def __init__(self):
@@ -34,8 +35,6 @@ class MainApp(QWidget):
         
         """
 
-
-        
         # call the ui components
         self.left_section = components.LeftWidgets()
         self.middle_section = components.MiddleWidgets()
@@ -64,7 +63,14 @@ class MainApp(QWidget):
 
     #----------------------------------------------------------------------------- functions
     def set_points(self, value):
-        self.middle_section.addpoints(value[0], value[1], value[2])    
+        if len(value) > 3:
+            self.middle_section.addpoints(value[0], value[1], value[2], value[3])
+        else:
+            gridx, gridy  = functions.interpolacion_transfinita_2D(value[0], value[1], 20, 20)
+            plt.plot(gridx, gridy, 'go')
+            plt.show()#print()
+
+
 
     def show_middle_pages(self, id):
         self.middle_section.set_page_by_id(id)
@@ -76,31 +82,24 @@ class MainApp(QWidget):
         gridx_2d, gridy_2d = np.meshgrid(np.linspace(0, lx, nx),
                                          np.linspace(0, ly, ny)) 
        
-        gridx_1d, gridy_1d  = functions.ARRtoLIST(gridx_2d, gridy_2d, nx, ny) 
-        functions.save_two_columns(self.db_meshgrid, gridx_1d, gridy_1d)
+        #gridx_1d, gridy_1d  = functions.ARRtoLIST(gridx_2d, gridy_2d, nx, ny) 
+        #functions.save_two_columns(self.db_meshgrid, gridx_1d, gridy_1d)
 
-        self.right_section.set_page_by_id(2)
+        self.right_section.set_page_by_id(1)
         #x = [1,2]; y = [1,2]
         #self.right_section.create_plot(x, y)
     
     def keyPressEvent(self, e):            
-        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_Z) :
-            print("Ctrl + Z Presionado...")
-            self.right_section.flag_plot = 2
-        
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_X) :
-            print("Ctrl + X Presionado...")
-            self.right_section.flag_plot = 3
-        
-        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_C) :
-            print("Ctrl + C Presionado...")
-            self.right_section.flag_plot = 4
+            self.right_section.flag_plot += 1
         
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_S) :
-            print("Ctrl + S")
-            x1 = self.right_section.xx[0]
-            y1 = self.right_section.yy[0]
-            print("endpoint: ", x1, y1)
+            print("Generar malla...")
+            self.right_section.join_boundaries()
+        
+        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_C) :
+            print("Generar malla...")
+            self.right_section.new_mesh()
             
 
 
