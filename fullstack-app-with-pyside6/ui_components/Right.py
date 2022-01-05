@@ -5,13 +5,34 @@ from PySide6.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas  
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backend_bases import MouseButton
 #import PySide6.QtCharts
 
 
 class RightWidgets(QWidget):
+    signal_to_save_data = Signal(tuple)
+    
     def __init__(self):
         super().__init__()
         self.fig = plt.figure()
+        self.xx = [0]; self.yy = [0]
+        self.xx_2 = [0]; self.yy_2 = [0]
+        self.xx_3 = [0]; self.yy_3 = [0]
+        self.xx_4 = [0]; self.yy_4 = [0]
+
+        self.ax = self.fig.add_subplot(111)
+        self.line1, = self.ax.plot(self.xx, self.yy, 'bo-', picker=True, pickradius=5)
+        self.line2, = self.ax.plot(self.xx_2, self.yy_2, 'go-', picker=True, pickradius=5)
+        self.line3, = self.ax.plot(self.xx_3, self.yy_3, 'mo-', picker=True, pickradius=5)
+        self.line4, = self.ax.plot(self.xx_4, self.yy_4, 'ro-', picker=True, pickradius=5)
+
+        binding_id = plt.connect('motion_notify_event', self.on_move)
+        plt.connect('button_press_event', self.on_click)
+        #fig.canvas.mpl_connect('pick_event', onpick)
+
+        self.flag_plot = 1
+
+
         self.stacked_widget = QStackedWidget()
         self.page_0()
         self.page_1()
@@ -89,21 +110,58 @@ class RightWidgets(QWidget):
         
         self.stacked_widget.insertWidget(id, frame)
     
-    def mousePressEvent(self, e):        
-        if e.button() == Qt.MouseButton.LeftButton:
-            self.etiqueta.setText("Click...")
     
     #---------------------------------------------------- plots and signals
     def create_plot(self, gridx, gridy):
-        self.fig.clf()
-        ax = self.fig.add_subplot(111)
-        ax.plot(gridx, gridy, 'g-', gridx.transpose(), gridy.transpose(),'g-')
+        #self.fig.clf()
+        #ax = self.fig.add_subplot(111)
+        #ax.plot(gridx, gridy, 'g-', gridx.transpose(), gridy.transpose(),'g-')
         #if axis_equal:
             #print("true")
             #ax.axis('equal')
+        self.line1.set_xdata(gridx)
+        self.line1.set_ydata(gridy)
         self.canvas.draw()
         self.canvas.flush_events()
-         
-    def send_parameters_by_signal(self):
-        tuple_1 = (self.lx.text(), self.ly.text(), self.nodes_x.text(), self.nodes_y.text())
-        self.signal.emit(tuple_1)
+    
+    #------------------------------------------------------ matplotlib drawing functions
+    def on_click(self, event):
+        if event.button is MouseButton.LEFT:           
+            if self.flag_plot == 1:
+                boundary_name = "South"
+                self.xx.append(event.xdata)
+                self.yy.append(event.ydata)
+                self.line1.set_xdata(self.xx)
+                self.line1.set_ydata(self.yy)
+            
+            if self.flag_plot == 2:
+                boundary_name = "East"
+                self.xx_2.append(event.xdata)
+                self.yy_2.append(event.ydata)
+                self.line2.set_xdata(self.xx_2)
+                self.line2.set_ydata(self.yy_2)
+             
+            if self.flag_plot == 3:
+                boundary_name = "North"
+                self.xx_3.append(event.xdata)
+                self.yy_3.append(event.ydata)
+                self.line3.set_xdata(self.xx_3)
+                self.line3.set_ydata(self.yy_3)
+            
+            if self.flag_plot == 4:
+                boundary_name = "West"
+                self.xx_4.append(event.xdata)
+                self.yy_4.append(event.ydata)
+                self.line4.set_xdata(self.xx_4)
+                self.line4.set_ydata(self.yy_4)
+
+            tuple_1 = (event.xdata, event.ydata, boundary_name)
+            self.signal_to_save_data.emit(tuple_1) 
+            print("click: ", self.flag_plot)
+            self.fig.canvas.draw()
+    
+    def on_move(self, event):
+        #x, y = event.x, event.y
+        if event.inaxes:
+            ax = event.inaxes  # the axes instance
+            print('data coords %f %f' % (event.xdata, event.ydata))

@@ -206,17 +206,15 @@ class MiddleWidgets(QWidget):
         self.btn_more.setEnabled(self.response)
         
         
-        def addpoints(self):
-            import random
-            sam = random.random()
-            self.cont = self.cont + 1
-            
-            item0 = QStandardItem("south")
-            item1 = QStandardItem( str(round(sam, 1)) + " , " + str(round(sam, 2)) )
-            item0.setTextAlignment(Qt.AlignHCenter)
-            item1.setTextAlignment(Qt.AlignHCenter)
-            self.model.setItem(self.cont, 0, item0)
-            self.model.setItem(self.cont, 1, item1)
+    def addpoints(self, point_x, point_y, boundary):
+        item0 = QStandardItem(boundary)
+        item1 = QStandardItem( str(round(point_x, 2)) + " , " + str(round(point_y, 2)) )
+        item0.setTextAlignment(Qt.AlignHCenter)
+        item1.setTextAlignment(Qt.AlignHCenter)
+        self.model.setItem(self.cont, 0, item0)
+        self.model.setItem(self.cont, 1, item1)
+        
+        self.cont = self.cont + 1
 
     #---------------------------------------------------- send signals     
     def send_parameters_by_signal(self):

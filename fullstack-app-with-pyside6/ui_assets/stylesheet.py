@@ -4,10 +4,8 @@ QSplitter::handle {
     background: orange;
 }
 QTableView {
-    background: gray;
     text-align: center;
-    font-size: 18px;
-    color: red;
+    font-size: 14px;
 }
 
 
