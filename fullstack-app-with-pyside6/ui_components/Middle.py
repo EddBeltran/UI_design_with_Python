@@ -4,7 +4,9 @@ from PySide6.QtWidgets import *
 import numpy as np
 
 class MiddleWidgets(QWidget):
-    signal = Signal(tuple)
+    grid_parameters = Signal(tuple)
+    open_right_page = Signal(int)
+    
     
     def __init__(self):
         super().__init__()
@@ -34,7 +36,6 @@ class MiddleWidgets(QWidget):
         #path_array = path.split("\\")
         lbl_1 = QLabel("Exporer")
         lbl_2 = QLineEdit(path)
-        
         
         model = QFileSystemModel()
         model.setRootPath(QDir.currentPath())        
@@ -77,19 +78,13 @@ class MiddleWidgets(QWidget):
         self.nodes_y = QLineEdit()
         self.nodes_z = QLineEdit()
         self.nodes_z.setEnabled(False)
-        
-        #QValidator(float)Qd
+        # input validator
         self.onlyFloat = QDoubleValidator(10.0, 500000.0, 3)
         self.onlyInt = QIntValidator(10, 200)
         self.nodes_x.setValidator(self.onlyInt)
         self.nodes_y.setValidator(self.onlyInt)
-        
         self.lx.setValidator(self.onlyFloat)
         self.ly.setValidator(self.onlyFloat)
-        
-        
-        #self.onlyInt = Qva#QFloatValidator()
-        #self.nodes_x.setValidator(self.onlyInt)
         
 
         self.customize_cbx = QCheckBox("Draw custom grid")
@@ -107,7 +102,7 @@ class MiddleWidgets(QWidget):
         self.rb_4.setChecked(True)
         self.lbl_6 = QLabel("Iterations: ")
         self.iterations = QLineEdit("200")
-        self.btn_more = QPushButton("... More")
+        self.btn_more = QPushButton("Run...")
         self.set_pqtgraph_drawing_widgets()  
 
         generate_grid = QPushButton("Generate meshgrid")
@@ -137,6 +132,7 @@ class MiddleWidgets(QWidget):
         
         self.stacked_widget.insertWidget(id, frame)
         generate_grid.clicked.connect(self.send_parameters_by_signal)
+
     
     def page_2(self):
         id = 2
@@ -206,7 +202,7 @@ class MiddleWidgets(QWidget):
         self.btn_more.setEnabled(self.response)
         
         
-    def addpoints(self, id_array, boundary, point_x, point_y):
+    def add_points_in_table(self, id_array, boundary, point_x, point_y):
         item_0 = QStandardItem(str(id_array)) 
         item_1 = QStandardItem(boundary)
         item_2 = QStandardItem( str(round(point_x, 2)) )
@@ -221,16 +217,13 @@ class MiddleWidgets(QWidget):
         self.model.setItem(id_array, 2, item_2)
         self.model.setItem(id_array, 3, item_3)
 
-        self.cont = self.cont + 1
-
     #---------------------------------------------------- send signals     
     def send_parameters_by_signal(self):
-        #if (type(self.lx.text()))
-        #print(self.lx.validator())
         if (self.lx.text() == '' or self.ly.text() == '' or self.nodes_x.text() == '' or self.nodes_y.text() ==''):
             print("Please fill the required fields")
         else:
             tuple_1 = (float(self.lx.text()), float(self.ly.text()), 0.0,
                        int(self.nodes_x.text()), int(self.nodes_y.text()), 0 )
 
-            self.signal.emit(tuple_1)
+            self.grid_parameters.emit(tuple_1)
+            self.open_right_page.emit(1)

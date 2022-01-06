@@ -1,7 +1,8 @@
 import sys
-from PySide6.QtCore import QPoint, QSettings, QSize
+from PySide6.QtCore import * #QPoint, QSettings, QSize
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
+from numpy.core.function_base import linspace
 import ui_components as components
 import ui_assets as assets
 import ui_functions as functions
@@ -13,8 +14,12 @@ class MainApp(QWidget):
         super().__init__()
         #self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle("Reservoir Simulator")
-
         self.database_connexion()
+        # set variables
+        self.nodes_x = 10
+        self.nodes_y = 10
+        self.length_x = 100
+        self.length_y = 100
 
         self.main_layout = QGridLayout()
         self.main_layout.setSpacing(0)
@@ -52,56 +57,109 @@ class MainApp(QWidget):
         self.main_layout.addWidget(self.splitter, 0,1,1,1)
         self.main_layout.addWidget(self.bottom_section.frame, 1,0,1,2)
         
-        # call functions when a button is clicked or a signal is activated
+        # open pages when a button is clicked or a signal is activated
         self.left_section.buttongroup.idClicked.connect(self.show_middle_pages)
-        self.middle_section.signal.connect(self.show_right_content)
-        self.right_section.signal_to_save_data.connect(self.set_points)
+        self.middle_section.open_right_page.connect(self.show_right_pages)
+        self.middle_section.customize_cbx.stateChanged.connect(self.show_right_pages_matplotlib)
+
+        # other functions
+        self.middle_section.grid_parameters.connect(self.set_grid_parameters)
+        self.right_section.grid_control_points.connect(self.save_clicked_points)
+        self.middle_section.btn_more.clicked.connect(self.mesh_with_elliptics)
+        
     
-    def database_connexion(self):
-        print("database connected")
-        self.db_meshgrid = "local_project_directory/input-data/meshgrid.csv"
-
     #----------------------------------------------------------------------------- functions
-    def set_points(self, value):
-        if len(value) > 3:
-            self.middle_section.addpoints(value[0], value[1], value[2], value[3])
-        else:
-            gridx, gridy  = functions.interpolacion_transfinita_2D(value[0], value[1], 20, 20)
-            plt.plot(gridx, gridy, 'go')
-            plt.show()#print()
-
-
+    def database_connexion(self):
+        self.db_meshgrid = "local_project_directory/input-data/meshgrid.csv"
 
     def show_middle_pages(self, id):
         self.middle_section.set_page_by_id(id)
         if self.middle_section.stacked_widget.frameGeometry().width() == 0:
             self.splitter.setSizes([236, 1075])
 
-    def show_right_content(self, value):
-        lx, ly, nx , ny = value[0], value[1], value[3], value[4] 
-        gridx_2d, gridy_2d = np.meshgrid(np.linspace(0, lx, nx),
-                                         np.linspace(0, ly, ny)) 
-       
-        #gridx_1d, gridy_1d  = functions.ARRtoLIST(gridx_2d, gridy_2d, nx, ny) 
-        #functions.save_two_columns(self.db_meshgrid, gridx_1d, gridy_1d)
-
-        self.right_section.set_page_by_id(1)
-        #x = [1,2]; y = [1,2]
-        #self.right_section.create_plot(x, y)
+    def show_right_pages(self, id):
+        self.right_section.set_page_by_id(id)
     
+    def show_right_pages_matplotlib(self, state):
+        if state < 1:
+            self.right_section.set_page_by_id(1)
+            self.my_grid = 1
+        
+        if state > 1:
+            self.right_section.set_page_by_id(2)
+            self.my_grid = 2
+
+    
+    def save_clicked_points(self, value):
+        self.middle_section.add_points_in_table(value[0], value[1], value[2], value[3])
+    
+    def set_grid_parameters(self, value):
+        self.length_x = value[0]
+        self.length_y = value[1]
+        self.nodes_x = value[3]
+        self.nodes_y = value[4]
+
+        self.right_section.ax.set_xlim(0, self.length_x)
+        self.right_section.ax.set_ylim(0, self.length_y)
+        self.generate_meshgrid_points()
+        
+    
+    #--------------------------------------------------------------------- key press events
     def keyPressEvent(self, e):            
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_X) :
             self.right_section.flag_plot += 1
         
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_S) :
-            print("Generar malla...")
-            self.right_section.join_boundaries()
-        
-        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_C) :
-            print("Generar malla...")
-            self.right_section.new_mesh()
-            
+            self.generate_meshgrid_points()
 
+        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_C) :
+            print("Generar nueva malla...")
+            #self.right_section.new_mesh()
+        
+        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_Z):
+            self.right_section.flag_plot = 1
+            self.right_section.xx_1 = []
+            self.right_section.yy_1 = []
+            self.right_section.xx_2 = []
+            self.right_section.yy_2 = []
+            self.right_section.xx_3 = []
+            self.right_section.yy_3 = []
+            self.right_section.xx_4 = []
+            self.right_section.yy_4 = []
+
+    def generate_meshgrid_points(self):
+        if self.middle_section.customize_cbx.isChecked():
+            self.right_section.xx_4.append(self.right_section.xx_1[0])
+            self.right_section.yy_4.append(self.right_section.yy_1[0])
+            puntos_control_f_sur_x = self.right_section.xx_1
+            puntos_control_f_sur_y = self.right_section.yy_1
+            puntos_control_f_este_x = self.right_section.xx_2
+            puntos_control_f_este_y = self.right_section.yy_2
+            puntos_control_f_norte_x = self.right_section.xx_3
+            puntos_control_f_norte_y = self.right_section.yy_3
+            puntos_control_f_oeste_x = self.right_section.xx_4
+            puntos_control_f_oeste_y = self.right_section.yy_4
+            front_sur_x, front_sur_y = functions.interp_polilinea(puntos_control_f_sur_x, puntos_control_f_sur_y, self.nodes_x)
+            front_este_x, front_este_y = functions.interp_polilinea(puntos_control_f_este_x, puntos_control_f_este_y, self.nodes_y)
+            front_norte_x, front_norte_y = functions.interp_polilinea(puntos_control_f_norte_x, puntos_control_f_norte_y, self.nodes_x)
+            front_oeste_x, front_oeste_y = functions.interp_polilinea(puntos_control_f_oeste_x, puntos_control_f_oeste_y, self.nodes_y, ultimo_punto=True)
+            contorno_malla_x = np.concatenate((front_sur_x, front_este_x, front_norte_x, front_oeste_x), axis=None)
+            contorno_malla_y = np.concatenate((front_sur_y, front_este_y, front_norte_y, front_oeste_y), axis=None)
+            self.gridx, self.gridy  = functions.interpolacion_transfinita_2D(contorno_malla_x, contorno_malla_y, self.nodes_y, self.nodes_y)
+            self.right_section.set_page_by_id(1)
+        
+        else:
+            self.gridx, self.gridy = np.meshgrid(
+                linspace(0, self.length_x, self.nodes_x),
+                linspace(0, self.length_y, self.nodes_y)
+            )
+
+        self.right_section.create_plot(self.gridx, self.gridy)
+    
+    def mesh_with_elliptics(self):
+        self.gridx, self.gridy = functions.mallador_elipticas_2D(self.gridx, self.gridy, self.nodes_x, self.nodes_y)
+        self.right_section.create_plot(self.gridx, self.gridy)
+        
 
 
 if __name__ == '__main__':    
