@@ -1,6 +1,6 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 import sys, time
 
 
@@ -38,4 +38,4 @@ if __name__ == "__main__":
     form.show()
     splash.finish(form)
     
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

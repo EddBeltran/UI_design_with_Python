@@ -1,7 +1,6 @@
 import sys
 from PySide6.QtWidgets import QLabel, QWidget, QApplication, QPushButton, QGridLayout
-
-from   ejemplo_6_pyqtsignal_GUI_secundaria import GUI_DOS # Importamos la gui secundaria
+from  ejemplo_6_pyqtsignal_GUI_secundaria import GUI_DOS # Importamos la gui secundaria
 
 class MyApp(QWidget):
     def __init__(self):
@@ -17,15 +16,14 @@ class MyApp(QWidget):
         self.layout.addWidget(self.etiqueta, 1, 0, 1, 1)
         # importamos la segunda GUI y en caso de recibir la señal, corre
         # la función -> recibir valores
-        self.nueva_ventana = GUI_DOS(self)
+        self.nueva_ventana = GUI_DOS()
         self.nueva_ventana.signal_gui.connect(self.recibir_valores)
         
     def abrir_gui(self): #Funcion para abrir la segunda ventana
         self.nueva_ventana.show()
     
-    def recibir_valores(self,valor_1,valor_2):
-        texto = ("Has recibido los valores: " + 
-            str(valor_1) + ", " + str(valor_2))
+    def recibir_valores(self,valor):
+        texto = ( "Has recibido los valores: " + valor[0] + ", " + valor[1] )
         self.etiqueta.setText(texto)
 
 if __name__ == '__main__':    

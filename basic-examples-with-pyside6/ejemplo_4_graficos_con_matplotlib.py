@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
+from PySide6.QtWidgets import QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
 # Importamos los siguientes archivos para deplegar matplotlib en Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt

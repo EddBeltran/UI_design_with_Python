@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QProgressBar, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
+from PySide6.QtWidgets import QProgressBar, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit
 
 class MyApp(QWidget):
     def __init__(self):

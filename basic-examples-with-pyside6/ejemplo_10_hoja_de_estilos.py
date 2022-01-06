@@ -1,3 +1,5 @@
+style = '''
+
 QLabel {
     font-size: 18px;
 }
@@ -18,3 +20,5 @@ QPushButton {
     padding: 10px;
     border: 1px solid magenta;
 }
+
+'''

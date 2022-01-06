@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QApplication, QPushButton
+from PySide6.QtWidgets import QWidget, QApplication, QPushButton
 
 class MyWidget(QWidget):
     def __init__(self):

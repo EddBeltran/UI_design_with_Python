@@ -1,6 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QLabel, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit, QSlider
-
+from PySide6.QtWidgets import QLabel, QWidget, QApplication, QGridLayout, QPushButton, QLineEdit, QSlider
+from ejemplo_10_hoja_de_estilos import style
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -20,11 +20,7 @@ class MyApp(QWidget):
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)
-
-    with open('ejemplo_10_hoja_de_estilos.qss', 'r') as f:
-       style = f.read()
     app.setStyleSheet(style)
-
     myApp = MyApp()    
     myApp.show()
     sys.exit(app.exec())
