@@ -90,10 +90,17 @@ class RightWidgets(QWidget):
           
     
     #---------------------------------------------------- plots and signals
-    def create_plot(self, gridx, gridy): # plot meshgrid
+    def create_plot(self, cont_x, cont_y, gridx, gridy): # plot meshgrid
         self.fig_1.clf()
         ax = self.fig_1.add_subplot(111)
-        ax.plot(gridx, gridy, 'y-', gridx.transpose(), gridy.transpose(),'y-')
+
+        ax.plot(gridx, gridy, 'y-', gridx.transpose(), gridy.transpose(),'y-')      
+        ax.plot(self.xx_1, self.yy_1, 'go-')
+        ax.plot(self.xx_2, self.yy_2, 'bo-')
+        ax.plot(self.xx_3, self.yy_3, 'mo-')
+        ax.plot(self.xx_4, self.yy_4, 'ro-')
+        ax.plot(cont_x, cont_y, 'k.-')
+
         ax.set_title('Malla estructurada 2D')
         ax.axis('equal')
         self.canvas_1.draw()
@@ -158,8 +165,8 @@ class RightWidgets(QWidget):
     def new_mesh(self):
         #Malla con ecuaciones elipticas
         nodos_x, nodos_y = 10, 10 
-        itermax = 300
-        error = 0.001
+        itermax = 800
+        error = 0.0001
 
         alpha, beta, gamma = np.zeros((nodos_x,nodos_y)), np.zeros((nodos_x,nodos_y)), np.zeros((nodos_x,nodos_y))
         X, Y= np.zeros((nodos_x,nodos_y)), np.zeros((nodos_x,nodos_y))
@@ -183,8 +190,16 @@ class RightWidgets(QWidget):
             errY[t] = np.linalg.norm(newY)
             
             #Neuman BC
-            newY[0,:] = newY[1,:]   #rigth
-            #newY[nodos_x-1,:] = newY[nodos_x-2,:] #left
+            newX[0,:] = X[1,:]   #rigth
+            newX[nodos_x-1, :] = X[nodos_x-1, :] #left
+            newX[:, nodos_y-1] = X[:, nodos_y-1]   #top
+            newX[:, 0] = X[:, 0] #bottom
+
+            newY[0,:] = Y[1,:]   #rigth
+            newY[nodos_x-1, :] = Y[nodos_x-1, :] #left
+            newY[:, nodos_y-1] = Y[:, nodos_y-1]   #top
+            newY[:, 0] = Y[:, 0] #bottom
+
             
             if t>2:
                 err_x = errX[t] - errX[t-1]; err_y = errY[t] - errY[t-1]   

@@ -110,12 +110,14 @@ class MainApp(QWidget):
             self.right_section.flag_plot += 1
         
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_S) :
-            self.generate_meshgrid_points()
+            self.right_section.xx_4.append(self.right_section.xx_1[0])
+            self.right_section.yy_4.append(self.right_section.yy_1[0])
+            self.right_section.line4.set_xdata(self.right_section.xx_4)
+            self.right_section.line4.set_ydata(self.right_section.yy_4)
+            self.right_section.canvas_2.draw()
+            print("grid_closed")
+       
 
-        if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_C) :
-            print("Generar nueva malla...")
-            #self.right_section.new_mesh()
-        
         if e.key() == (Qt.Key.Key_Control and Qt.Key.Key_Z):
             self.right_section.flag_plot = 1
             self.right_section.xx_1 = []
@@ -129,8 +131,6 @@ class MainApp(QWidget):
 
     def generate_meshgrid_points(self):
         if self.middle_section.customize_cbx.isChecked():
-            self.right_section.xx_4.append(self.right_section.xx_1[0])
-            self.right_section.yy_4.append(self.right_section.yy_1[0])
             puntos_control_f_sur_x = self.right_section.xx_1
             puntos_control_f_sur_y = self.right_section.yy_1
             puntos_control_f_este_x = self.right_section.xx_2
@@ -139,26 +139,32 @@ class MainApp(QWidget):
             puntos_control_f_norte_y = self.right_section.yy_3
             puntos_control_f_oeste_x = self.right_section.xx_4
             puntos_control_f_oeste_y = self.right_section.yy_4
-            front_sur_x, front_sur_y = functions.interp_polilinea(puntos_control_f_sur_x, puntos_control_f_sur_y, self.nodes_x)
-            front_este_x, front_este_y = functions.interp_polilinea(puntos_control_f_este_x, puntos_control_f_este_y, self.nodes_y)
-            front_norte_x, front_norte_y = functions.interp_polilinea(puntos_control_f_norte_x, puntos_control_f_norte_y, self.nodes_x)
-            front_oeste_x, front_oeste_y = functions.interp_polilinea(puntos_control_f_oeste_x, puntos_control_f_oeste_y, self.nodes_y, ultimo_punto=True)
-            contorno_malla_x = np.concatenate((front_sur_x, front_este_x, front_norte_x, front_oeste_x), axis=None)
-            contorno_malla_y = np.concatenate((front_sur_y, front_este_y, front_norte_y, front_oeste_y), axis=None)
-            self.gridx, self.gridy  = functions.interpolacion_transfinita_2D(contorno_malla_x, contorno_malla_y, self.nodes_y, self.nodes_y)
+            front_sur_x, front_sur_y = functions.interpolador_lineal(puntos_control_f_sur_x, puntos_control_f_sur_y, self.nodes_x)
+            front_este_x, front_este_y = functions.interpolador_lineal(puntos_control_f_este_x, puntos_control_f_este_y, self.nodes_y)
+            front_norte_x, front_norte_y = functions.interpolador_lineal(puntos_control_f_norte_x, puntos_control_f_norte_y, self.nodes_x)
+            front_oeste_x, front_oeste_y = functions.interpolador_lineal(puntos_control_f_oeste_x, puntos_control_f_oeste_y, self.nodes_y, ultimo_punto=True)
+            self.contorno_malla_x = np.concatenate((front_sur_x, front_este_x, front_norte_x, front_oeste_x), axis=None)
+            self.contorno_malla_y = np.concatenate((front_sur_y, front_este_y, front_norte_y, front_oeste_y), axis=None)
+            
+            print("nodos - x,y: ", self.nodes_x, self.nodes_y)
+            print("sur: ", len(front_sur_x)+1)
+            print("este: ", len(front_este_x)+1)
+            print("norte: ", len(front_norte_x)+1)
+            print("oeste: ", len(front_oeste_x))
+            
+            self.gridx, self.gridy  = functions.interpolacion_transfinita_2D(self.contorno_malla_x, self.contorno_malla_y, self.nodes_x, self.nodes_y)
             self.right_section.set_page_by_id(1)
+
         
         else:
-            self.gridx, self.gridy = np.meshgrid(
-                linspace(0, self.length_x, self.nodes_x),
-                linspace(0, self.length_y, self.nodes_y)
-            )
-
-        self.right_section.create_plot(self.gridx, self.gridy)
+            self.gridx, self.gridy = np.meshgrid( linspace(0, self.length_x, self.nodes_x), linspace(0, self.length_y, self.nodes_y))
+            self.contorno_malla_x = 0
+            self.contorno_malla_y = 0
+        self.right_section.create_plot(self.contorno_malla_x, self.contorno_malla_y, self.gridx, self.gridy)
     
     def mesh_with_elliptics(self):
         self.gridx, self.gridy = functions.mallador_elipticas_2D(self.gridx, self.gridy, self.nodes_x, self.nodes_y)
-        self.right_section.create_plot(self.gridx, self.gridy)
+        self.right_section.create_plot(self.contorno_malla_x, self.contorno_malla_y, self.gridx, self.gridy)
         
 
 
