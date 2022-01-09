@@ -93,7 +93,7 @@ class MiddleWidgets(QWidget):
         self.tableWidget = QTableView()
         self.tableWidget.verticalHeader().setVisible(False)      
         self.model = QStandardItemModel()
-        self.model.setHorizontalHeaderLabels(['id','Boundary', 'X', 'Y'])
+        self.model.setHorizontalHeaderLabels(['X', 'Y', 'Boundary', 'id'])
         self.tableWidget.setModel(self.model)
         self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
@@ -129,7 +129,6 @@ class MiddleWidgets(QWidget):
         layout.addWidget(self.btn_more, 11,2,1,1)
         layout.addWidget(generate_grid, 12,0,1,3, Qt.AlignmentFlag.AlignBottom)
         layout.setRowStretch(12,3)
-        
         self.stacked_widget.insertWidget(id, frame)
         generate_grid.clicked.connect(self.send_parameters_by_signal)
 
@@ -140,7 +139,6 @@ class MiddleWidgets(QWidget):
         layout = QVBoxLayout()
         #layout.setContentsMargins(0,0,0,0)
         frame.setLayout(layout)
-
         lbl_1 = QLabel("page 2")
         layout.addWidget(lbl_1)
         self.stacked_widget.insertWidget(id, frame)
@@ -151,7 +149,6 @@ class MiddleWidgets(QWidget):
         layout = QVBoxLayout()
         #layout.setContentsMargins(0,0,0,0)
         frame.setLayout(layout)
-
         lbl_1 = QLabel("page 3")
         layout.addWidget(lbl_1)
         self.stacked_widget.insertWidget(id, frame)
@@ -162,7 +159,6 @@ class MiddleWidgets(QWidget):
         layout = QVBoxLayout()
         #layout.setContentsMargins(0,0,0,0)
         frame.setLayout(layout)
-
         lbl_1 = QLabel("page 4")
         layout.addWidget(lbl_1)
         self.stacked_widget.insertWidget(id, frame)
@@ -202,11 +198,12 @@ class MiddleWidgets(QWidget):
         self.btn_more.setEnabled(self.response)
         
         
-    def add_points_in_table(self, id_array, boundary, point_x, point_y):
-        item_0 = QStandardItem(str(id_array)) 
-        item_1 = QStandardItem(boundary)
-        item_2 = QStandardItem( str(round(point_x, 2)) )
-        item_3 = QStandardItem( str(round(point_y, 2)) )
+    def add_points_in_table(self, point_x, point_y, boundary, id_array):
+        item_0 = QStandardItem( str(round(point_x, 2)) )
+        item_1 = QStandardItem( str(round(point_y, 2)) )
+        item_2 = QStandardItem(boundary)
+        item_3 = QStandardItem(str(id_array))
+
         item_0.setTextAlignment(Qt.AlignHCenter)
         item_1.setTextAlignment(Qt.AlignHCenter)
         item_2.setTextAlignment(Qt.AlignHCenter)
@@ -224,6 +221,4 @@ class MiddleWidgets(QWidget):
         else:
             tuple_1 = (float(self.lx.text()), float(self.ly.text()), 0.0,
                        int(self.nodes_x.text()), int(self.nodes_y.text()), 0 )
-
             self.grid_parameters.emit(tuple_1)
-            self.open_right_page.emit(1)

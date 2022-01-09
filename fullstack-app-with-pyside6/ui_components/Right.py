@@ -14,14 +14,13 @@ class RightWidgets(QWidget):
     
     def __init__(self):
         super().__init__()
-
+        # variables
         self.flag_plot = 1
-
+        self.control_point_index = 0
+        # render pages
         self.stacked_widget = QStackedWidget()
         self.page_0()
         self.page_1()
-        self.page_2()
-        
         self.set_page_by_id(0)
     
     def set_page_by_id(self, id):
@@ -32,11 +31,15 @@ class RightWidgets(QWidget):
         id = 0
         frame = QFrame()
         layout = QVBoxLayout()
-        #layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0,0,0,0)
         frame.setLayout(layout)
-
-        lbl_1 = QLabel("default page right")
-        layout.addWidget(lbl_1)
+        self.fig_1 = plt.figure()
+        self.canvas_1 = FigureCanvas(self.fig_1)
+        ax = self.fig_1.add_subplot(111)     
+        ax.set_title('Malla sencilla 2D')
+        ax.axis('equal')
+        self.canvas_1.draw()
+        layout.addWidget(self.canvas_1)
         self.stacked_widget.insertWidget(id, frame)
     
     def page_1(self):
@@ -45,26 +48,34 @@ class RightWidgets(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0,0,0,0)
         frame.setLayout(layout)
-
-        self.fig_1 = plt.figure()
-        self.canvas_1 = FigureCanvas(self.fig_1)
-        #self.create_plot(0,0)
-
-        layout.addWidget(self.canvas_1)
-        self.stacked_widget.insertWidget(id, frame)
-    
-    def page_2(self):
-        id = 2
-        frame = QFrame()
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
-        frame.setLayout(layout)
-
         self.fig_2 = plt.figure()
         self.canvas_2 = FigureCanvas(self.fig_2)
+        self.set_drawing_workspace()
+
+        binding_id = plt.connect('motion_notify_event', self.on_move)
+        plt.connect('button_press_event', self.on_click)
+        #self.fig.canvas.mpl_connect('pick_event', onpick)
+        layout.addWidget(self.canvas_2)
+        self.stacked_widget.insertWidget(id, frame)
+    
+
+    #---------------------------------------------------- plots from matplotlib
+    def create_regular_meshgrid(self, gridx, gridy):
+        self.fig_1.clf()
+        ax = self.fig_1.add_subplot(111)
+        ax.plot(gridx, gridy, 'g.-', gridx.transpose(), gridy.transpose(),'g.-')      
+        ax.set_title('Malla sencilla 2D')
+        ax.axis('equal')
+        self.canvas_1.draw()
+        self.canvas_1.flush_events()
+
+    def set_drawing_workspace(self, lim_x=100, lim_y=100):
+        self.fig_2.clf()
         self.ax = self.fig_2.add_subplot(111)
         self.ax.axis('equal')
         self.ax.set_title('Dibuja al hacer click')
+        self.ax.set_xlim(0, lim_x)
+        self.ax.set_ylim(0, lim_y)
 
         self.xx_1 = []; self.yy_1 = []
         self.xx_2 = []; self.yy_2 = []
@@ -72,45 +83,34 @@ class RightWidgets(QWidget):
         self.xx_4 = []; self.yy_4 = []
         self.gridx = []; self.gridy = [] 
         self.gridx_2 = []; self.gridy_2 = []
-      
         self.line1, = self.ax.plot(self.xx_1, self.yy_1, 'go-', picker=True, pickradius=5)
         self.line2, = self.ax.plot(self.xx_2, self.yy_2, 'bo-', picker=True, pickradius=5)
         self.line3, = self.ax.plot(self.xx_3, self.yy_3, 'mo-', picker=True, pickradius=5)
         self.line4, = self.ax.plot(self.xx_4, self.yy_4, 'ro-', picker=True, pickradius=5)
         self.line_grid, = self.ax.plot(self.gridy, self.gridy, 'yo', picker=True, pickradius=5)
         self.line_grid_2, = self.ax.plot(self.gridy_2, self.gridy_2, 'ko', picker=True, pickradius=5)
-
-        binding_id = plt.connect('motion_notify_event', self.on_move)
-        plt.connect('button_press_event', self.on_click)
-        #self.fig.canvas.mpl_connect('pick_event', onpick)
-
-        
-        layout.addWidget(self.canvas_2)
-        self.stacked_widget.insertWidget(id, frame)
-          
+        self.canvas_2.draw()
+        self.canvas_2.flush_events()
     
-    #---------------------------------------------------- plots and signals
-    def create_plot(self, cont_x, cont_y, gridx, gridy): # plot meshgrid
-        self.fig_1.clf()
-        ax = self.fig_1.add_subplot(111)
+    def create_irregular_meshgrid(self, gridx, gridy):
+        self.fig_2.clf()
+        self.ax = self.fig_2.add_subplot(111)
+        self.ax.plot(gridx, gridy, 'c.-', gridx.transpose(), gridy.transpose(),'c.-')      
+        self.ax.set_title('Malla irregular 2D')
+        self.ax.axis('equal')
+        self.canvas_2.draw()
+        self.canvas_2.flush_events()
 
-        ax.plot(gridx, gridy, 'y-', gridx.transpose(), gridy.transpose(),'y-')      
-        ax.plot(self.xx_1, self.yy_1, 'go-')
-        ax.plot(self.xx_2, self.yy_2, 'bo-')
-        ax.plot(self.xx_3, self.yy_3, 'mo-')
-        ax.plot(self.xx_4, self.yy_4, 'ro-')
-        ax.plot(cont_x, cont_y, 'k.-')
-
-        ax.set_title('Malla estructurada 2D')
-        ax.axis('equal')
-        self.canvas_1.draw()
-        self.canvas_1.flush_events()
     
-    #------------------------------------------------------ matplotlib drawing functions
+    #------------------------------------------------------ mouse interactions with matplotlib
+    def on_move(self, event):
+        #x, y = event.x, event.y
+        if event.inaxes:
+            ax = event.inaxes
+
     def on_click(self, event):
         if event.button is MouseButton.LEFT:
-            if self.flag_plot == 1:
-                index = len(self.xx_1)          
+            if self.flag_plot == 1:         
                 boundary_name = "South"
                 self.xx_1.append(event.xdata)
                 self.yy_1.append(event.ydata)
@@ -118,12 +118,10 @@ class RightWidgets(QWidget):
                 self.line1.set_ydata(self.yy_1)
             
             if self.flag_plot == 2:
-                len1 = len(self.xx_1)
-                index = len1
                 boundary_name = "East"
                 if len(self.xx_2) < 1:    
-                    self.xx_2.append(self.xx_1[len1-1])
-                    self.yy_2.append(self.yy_1[len1-1])
+                    self.xx_2.append(self.xx_1[len(self.xx_1) - 1])
+                    self.yy_2.append(self.yy_1[len(self.yy_1) - 1])
 
                 self.xx_2.append(event.xdata)
                 self.yy_2.append(event.ydata)
@@ -131,12 +129,10 @@ class RightWidgets(QWidget):
                 self.line2.set_ydata(self.yy_2)
              
             if self.flag_plot == 3:
-                len2 = len(self.xx_2)
-                index = len2
                 boundary_name = "North"
                 if len(self.xx_3) < 1:    
-                    self.xx_3.append(self.xx_2[len2-1])
-                    self.yy_3.append(self.yy_2[len2-1])
+                    self.xx_3.append(self.xx_2[len(self.xx_2) - 1])
+                    self.yy_3.append(self.yy_2[len(self.yy_2) - 1])
 
                 self.xx_3.append(event.xdata)
                 self.yy_3.append(event.ydata)
@@ -144,26 +140,31 @@ class RightWidgets(QWidget):
                 self.line3.set_ydata(self.yy_3)
             
             if self.flag_plot == 4:
-                len3 = len(self.xx_3)
-                index = len3
                 boundary_name = "West"
                 if len(self.xx_4) < 1:    
-                    self.xx_4.append(self.xx_3[len3-1])
-                    self.yy_4.append(self.yy_3[len3-1])
+                    self.xx_4.append(self.xx_3[len(self.xx_3) - 1])
+                    self.yy_4.append(self.yy_3[len(self.yy_3) - 1])
 
                 self.xx_4.append(event.xdata)
                 self.yy_4.append(event.ydata)
                 self.line4.set_xdata(self.xx_4)
                 self.line4.set_ydata(self.yy_4)
-
-            tuple_1 = (index, boundary_name, event.xdata, event.ydata)
-            self.grid_control_points.emit(tuple_1)
+            
+            send_data = (event.xdata, event.ydata, boundary_name, self.control_point_index)
+            self.grid_control_points.emit( send_data )
+            self.control_point_index += 1
             self.canvas_2.draw()
-    
-       
-    
+
+
+
+
+
+
+
+
+
+            
     def new_mesh(self):
-        #Malla con ecuaciones elipticas
         nodos_x, nodos_y = 10, 10 
         itermax = 800
         error = 0.0001
@@ -199,34 +200,8 @@ class RightWidgets(QWidget):
             newY[nodos_x-1, :] = Y[nodos_x-1, :] #left
             newY[:, nodos_y-1] = Y[:, nodos_y-1]   #top
             newY[:, 0] = Y[:, 0] #bottom
-
             
             if t>2:
                 err_x = errX[t] - errX[t-1]; err_y = errY[t] - errY[t-1]   
                 if err_x<error and err_y<error: break
             X,Y = newX, newY
-
-        #self.line_grid_2.set_xdata(X)
-        #self.line_grid_2.set_ydata(Y)
-        #self.fig.canvas.draw()
-
-            
-            
-        #mandamos a pantalla la malla generada
-        #plt.title("Malla estructurada generada con EDP elípticas")
-        #plt.plot(X,Y,'b-', X.transpose(),Y.transpose(),'b-')
-        #plt.axis('equal')
-        #plt.show()
-
-        #x_new = np.concatenate((self.xx_1, self.xx_2, self.xx_3, self.xx_4 ), axis=None)
-        #y_new = np.concatenate((self.yy_1, self.yy_2, self.yy_3, self.yy_4 ), axis=None)
-        #tuple_1 = (x_new, y_new)
-        #self.signal_to_save_data.emit(tuple_1)
-        
-
-    
-    def on_move(self, event):
-        #x, y = event.x, event.y
-        if event.inaxes:
-            ax = event.inaxes  # the axes instance
-            #print('data coords %f %f' % (event.xdata, event.ydata))
