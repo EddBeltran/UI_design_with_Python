@@ -65,7 +65,7 @@ def interpolador_lineal(x, y, nodos, ultimo_punto=False):
     return puntos_x, puntos_y
 
 
-def interp_curva_bezier(x, y, nodos, ultimo_punto=False):
+def interp_cuadratic_bezier(x, y, nodos, ultimo_punto=False):
     """Esta función genera los puntos intermedios (`nodos`) de curva  dada la formula de Bezier y  los puntos p1(`x1`, `y1`),
     p2(`x2`, `y2`) y p3(`x3`, `y3`).    
 
@@ -83,35 +83,71 @@ def interp_curva_bezier(x, y, nodos, ultimo_punto=False):
         Arreglos de puntos para x e y dentro de la curva.
     """
     x_curva, y_curva = np.zeros(0), np.zeros(0)
-    u, k = 0.5, 2   #u es un parametro de ajuste para determinar en segundo punto de la curva
-    
-    # Se calcula el punto maximo/minimo que pasa por la curva
-    x2 = (1/(2*(1-u)*u))*x[k-1] - ((1-u)/(2*u))*x[k-2] - (u/(2*(1-u)))*x[k]
-    y2 = (1/(2*(1-u)*u))*y[k-1] - ((1-u)/(2*u))*y[k-2] - (u/(2*(1-u)))*y[k]
-    
-    delta = (0.9963*(nodos-1))**(-0.998) # La correlación genera el delta ideal que se adecua al numero de nodos deseado
-    
-    #Se genera la curva de Bezier de acuerdo al delta
+    delta = (0.9963*(nodos-1))**(-0.998) # Correlación para obtener los puntos deseados
     t = 0
     while t<1:
-        xs = (1-t)**2 * x[k-2] + 2*(1-t)*t*x2 + t**2*x[k]
-        ys = (1-t)**2 * y[k-2] + 2*(1-t)*t*y2 + t**2*y[k]
+        xs = (1-t)**2 * x[0] + 2*(1-t)*t*x[1] + t**2*x[2]
+        ys = (1-t)**2 * y[0] + 2*(1-t)*t*y[1] + t**2*y[2]
         x_curva = np.append(x_curva, xs); y_curva = np.append(y_curva, ys)
         t = t + delta
-    
     # Se elimina el ultimo punto si ultimo_punto = False
     if (ultimo_punto):
         x_curva = np.append(x_curva, x[2]); y_curva = np.append(y_curva, y[2])
     
-    #print("nodos", len(x_curva))
     return x_curva, y_curva
 
 
-"""
-import matplotlib.pyplot as plt
+def interp_cubic_bezier(x, y, nodos, ultimo_punto=False):
+    """Esta función genera los puntos intermedios (`nodos`) de curva  dada la formula de Bezier y  los puntos p1(`x1`, `y1`),
+    p2(`x2`, `y2`) y p3(`x3`, `y3`).    
 
-x , y = interp_polilinea([1,6,20], [1,10, 5], 10, ultimo_punto=False)
-plt.plot(x,y, 'bo-')
-plt.show()
+    Parametros
+    ----------
+    x, y : array_like or list.
+        Arreglos a la entrada, `x` -> [`x1`,`x2`,`x3`], `y`-> [`y1`,`y2`,`y3`].
+    nodos : int.
+        Puntos dentro de la curva de Bezier.
+    ultimo_punto: bool. Por default no se agrega el ultimo punto a la curva.
 
-"""
+    Retorna
+    -------
+    ndarray, ndarray.
+        Arreglos de puntos para x e y dentro de la curva.
+    """
+    x_curva, y_curva = np.zeros(0), np.zeros(0)
+    delta = (0.9963*(nodos-1))**(-0.998) # Correlación para obtener los puntos deseados
+    t = 0
+    while t<1:
+        xs = (1-t)**3*x[0] + 3*t*(1-t)**2*x[1] + 3*t**2*(1-t)*x[2] + t**3*x[3]
+        ys = (1-t)**3*y[0] + 3*t*(1-t)**2*y[1] + 3*t**2*(1-t)*y[2] + t**3*y[3]
+        x_curva = np.append(x_curva, xs); y_curva = np.append(y_curva, ys)
+        t = t + delta
+    # Se elimina el ultimo punto si ultimo_punto = False
+    if (ultimo_punto):
+        x_curva = np.append(x_curva, x[2]); y_curva = np.append(y_curva, y[2])
+
+    return x_curva, y_curva
+
+def calculate_control_point_cuadratic_bezier(x, y):
+    u = 0.5
+    x2 = (1/(2*(1-u)*u))*x[1] - ((1-u)/(2*u))*x[0] - (u/(2*(1-u)))*x[2]
+    y2 = (1/(2*(1-u)*u))*y[1] - ((1-u)/(2*u))*y[0] - (u/(2*(1-u)))*y[2]
+    return x2, y2
+
+def calculate_control_points_cubic_bezier(x, y):
+    r = 2
+    x2 = (x[0] + r * x[1]) / (1 + r)
+    y2 = (y[0] + r * y[1]) / (1 + r)
+
+    x3 = (x[2] + r * x[1]) / (1 + r)
+    y3 = (y[2] + r * y[1]) / (1 + r)
+    return x3, y3, x3, y3
+
+
+def euclidian_distance(x,y):
+    distancia = np.zeros(len(x)-1)
+    for i in range(0, distancia):
+        distancia[i] = ((x[i+1] - x[i]) ** 2 + (y[i+1] - y[i]) ** 2) ** 0.5 #calculamos las distancias entre cada segmento de recta
+    
+    return sum( distancia )
+

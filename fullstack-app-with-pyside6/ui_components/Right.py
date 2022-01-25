@@ -6,6 +6,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backend_bases import MouseButton
+import ui_functions as functions
 #import PySide6.QtCharts
 
 
@@ -17,6 +18,7 @@ class RightWidgets(QWidget):
         # variables
         self.flag_plot = 1
         self.control_point_index = 0
+        self.brush_tool = 1 #1-polygon, 2-bezierCurve
         # render pages
         self.stacked_widget = QStackedWidget()
         self.page_0()
@@ -104,9 +106,20 @@ class RightWidgets(QWidget):
     
     #------------------------------------------------------ mouse interactions with matplotlib
     def on_move(self, event):
-        #x, y = event.x, event.y
         if event.inaxes:
             ax = event.inaxes
+            #if len( self.xx_1) > 2:
+            #    #x, y = functions.interp_curva_bezier([self.xx_1[0], self.xx_1[1], event.xdata], [self.yy_1[0], self.yy_1[1], event.ydata], 20, ultimo_punto=True)
+            #    x, y = functions.interp_cuadratic_bezier([self.xx_1[0], self.xx_1[1], event.xdata], [self.yy_1[0], self.yy_1[1], event.ydata], 20, ultimo_punto=True)
+            #    self.line_grid.set_xdata(x)
+            #    self.line_grid.set_ydata(y)
+            #    self.canvas_2.draw()
+
+
+    
+    #def on_release(self, event):
+    #    if event.button is MouseButton.LEFT and self.brush_tool == 2:
+    #        print("released")
 
     def on_click(self, event):
         if event.button is MouseButton.LEFT:
@@ -154,8 +167,6 @@ class RightWidgets(QWidget):
             self.grid_control_points.emit( send_data )
             self.control_point_index += 1
             self.canvas_2.draw()
-
-
 
 
 

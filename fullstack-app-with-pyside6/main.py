@@ -20,7 +20,6 @@ class MainApp(QWidget):
         self.main_layout.setSpacing(0)
         self.main_layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.main_layout)
-
         """
         GUI Sections (ui_components)
         __________________________
@@ -34,7 +33,6 @@ class MainApp(QWidget):
         |________Bottom___________|
         
         """
-
         # call the ui components
         self.left_section = components.LeftWidgets()
         self.middle_section = components.MiddleWidgets()
@@ -80,7 +78,6 @@ class MainApp(QWidget):
 
     def save_clicked_points(self, value):
         self.middle_section.add_points_in_table(value[0], value[1], value[2], value[3])
-        
     
     #--------------------------------------------------------------------- key press events
     def keyPressEvent(self, e):            
