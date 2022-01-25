@@ -1,6 +1,6 @@
 # MalladorCC
 
-<img src="mallador_cc.gif" width="500px" height="auto" />
+<img src="gif_mallador_cc.gif" width="500px" height="auto" />
 
 ## Descripción
 
