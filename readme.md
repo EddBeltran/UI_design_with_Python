@@ -1,6 +1,8 @@
 # MalladorCC
 
+<div style="background:red;">
 <img src="gif_mallador_cc.gif" width="500px" height="auto" />
+</div>
 
 ## Descripción
 
