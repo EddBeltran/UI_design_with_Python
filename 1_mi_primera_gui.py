@@ -5,7 +5,7 @@ class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setGeometry(100, 100, 400, 200)
-        self.setWindowTitle("Mi primer GUI")
+        self.setWindowTitle("Mi primera GUI")
         self.boton = QPushButton("Botón",self)
 
 
@@ -14,4 +14,3 @@ if __name__ == "__main__":
     widget = MyWidget()
     widget.show()
     sys.exit(app.exec())
-

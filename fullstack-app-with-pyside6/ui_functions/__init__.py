@@ -1,3 +1,0 @@
-from ui_functions.dataframes_saver import save_two_columns
-from ui_functions.interpolador import interpolador_lineal, interp_cuadratic_bezier, interp_cubic_bezier, euclidian_distance
-from ui_functions.mallas_estructuradas_2D import interpolacion_transfinita_2D, mallador_elipticas_2D
